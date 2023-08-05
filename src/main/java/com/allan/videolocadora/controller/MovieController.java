@@ -10,15 +10,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.repository.MovieRepository;
-
-import model.Movie;
+import com.allan.videolocadora.model.Movie;
+import com.allan.videolocadora.repository.MovieRepository;
 
 @RestController
 @RequestMapping("/api/movies")
 public class MovieController {
 
-    @Autowired
     private final MovieRepository repository;
 
     public MovieController(MovieRepository repository) {
@@ -28,25 +26,5 @@ public class MovieController {
     @GetMapping
     public List<Movie> getList() {
         return repository.findAll();
-    }
-
-    @GetMapping
-    public Movie findById(String id) {
-        return null;
-    }
-
-    @PostMapping
-    public void insert() {
-
-    }
-
-    @PutMapping
-    public void update() {
-
-    }
-
-    @DeleteMapping
-    public void delete() {
-
     }
 }

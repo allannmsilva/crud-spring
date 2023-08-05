@@ -5,9 +5,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import com.repository.MovieRepository;
-
-import model.Movie;
+import com.allan.videolocadora.model.Movie;
+import com.allan.videolocadora.repository.MovieRepository;
 
 @SpringBootApplication
 public class CrudSpringApplication {

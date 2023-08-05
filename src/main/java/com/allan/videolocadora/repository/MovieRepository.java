@@ -1,11 +1,9 @@
-package com.repository;
+package com.allan.videolocadora.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-import model.Movie;
+import com.allan.videolocadora.model.Movie;
 
-@Repository
 public interface MovieRepository extends JpaRepository<Movie, Long> {
     
 }
