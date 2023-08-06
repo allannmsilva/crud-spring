@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.allan.videolocadora.model.Movie;
@@ -20,7 +21,7 @@ public class MovieController {
     }
 
     @GetMapping
-    public List<Movie> getList() {
+    public @ResponseBody List<Movie> getList() {
         return repository.findAll();
     }
 }
