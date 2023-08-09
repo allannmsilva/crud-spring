@@ -9,10 +9,10 @@ import com.allan.videolocadora.model.Movie;
 import com.allan.videolocadora.repository.MovieRepository;
 
 @SpringBootApplication
-public class CrudSpringApplication {
+public class Application {
 
 	public static void main(String[] args) {
-		SpringApplication.run(CrudSpringApplication.class, args);
+		SpringApplication.run(Application.class, args);
 	}
 
 	@Bean
