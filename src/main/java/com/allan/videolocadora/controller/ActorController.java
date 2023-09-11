@@ -11,28 +11,28 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.allan.videolocadora.model.Movie;
-import com.allan.videolocadora.repository.MovieRepository;
+import com.allan.videolocadora.model.Actor;
+import com.allan.videolocadora.repository.ActorRepository;
 
 @RestController
-@RequestMapping("/api/movies")
-public class MovieController {
+@RequestMapping("/api/actors")
+public class ActorController {
 
-    private final MovieRepository repository;
+    private final ActorRepository repository;
 
-    public MovieController(MovieRepository repository) {
+    public ActorController(ActorRepository repository) {
         this.repository = repository;
     }
 
     @GetMapping
-    public @ResponseBody List<Movie> getList() {
+    public @ResponseBody List<Actor> getList() {
         return repository.findAll();
     }
 
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
-    public /*ResponseEntity<Movie>*/ Movie insert(@RequestBody Movie movie) {
-        return repository.save(movie);
+    public /*ResponseEntity<Movie>*/ Actor insert(@RequestBody Actor actor) {
+        return repository.save(actor);
         //return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(movie));
     }
 }

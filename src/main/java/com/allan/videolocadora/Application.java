@@ -5,8 +5,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import com.allan.videolocadora.model.Movie;
-import com.allan.videolocadora.repository.MovieRepository;
+import com.allan.videolocadora.model.Actor;
+import com.allan.videolocadora.repository.ActorRepository;
 
 @SpringBootApplication
 public class Application {
@@ -16,10 +16,10 @@ public class Application {
 	}
 
 	@Bean
-	CommandLineRunner initDatabase(MovieRepository movieRepository) {
+	CommandLineRunner initDatabase(ActorRepository actorRepository) {
 		return args -> {
-			movieRepository.deleteAll();
-			movieRepository.save(new Movie("A Freira", "Terror"));
+			actorRepository.deleteAll();
+			actorRepository.save(new Actor("Ryan Reynolds"));
 		};
 	}
 
