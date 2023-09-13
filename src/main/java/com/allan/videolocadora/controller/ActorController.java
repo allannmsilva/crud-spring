@@ -1,15 +1,12 @@
 package com.allan.videolocadora.controller;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.OptionalInt;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import com.allan.videolocadora.model.Actor;
 import com.allan.videolocadora.repository.ActorRepository;
@@ -27,6 +24,24 @@ public class ActorController {
     @GetMapping
     public @ResponseBody List<Actor> getList() {
         return repository.findAll();
+    }
+
+    @GetMapping(value = "/{id}")
+    public @ResponseBody ResponseEntity<Actor> findById(@PathVariable Long id) {
+        return repository.findById(id) //
+                .map(actorFound -> ResponseEntity.ok().body(actorFound)) //
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping(value = "/{id}")
+    public @ResponseBody ResponseEntity<Actor> update(@PathVariable Long id, @RequestBody Actor actor) {
+        return repository.findById(id) //
+                .map(actorFound -> {
+                    actorFound.setName(actor.getName());
+                    Actor updated = repository.save(actorFound);
+                    return ResponseEntity.ok().body(updated);
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
