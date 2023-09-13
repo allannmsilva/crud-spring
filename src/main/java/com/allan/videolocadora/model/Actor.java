@@ -16,7 +16,7 @@ public class Actor {
     @JsonProperty("_id")
     private Long id;
 
-    @Column(length = 100, nullable = false)
+    @Column(length = 100, nullable = false, unique = true)
     private String name;
 
     public Actor() {
