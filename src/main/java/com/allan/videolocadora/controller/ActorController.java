@@ -1,6 +1,7 @@
 package com.allan.videolocadora.controller;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalInt;
 
@@ -49,5 +50,13 @@ public class ActorController {
     public /*ResponseEntity<Movie>*/ Actor insert(@RequestBody Actor actor) {
         return repository.save(actor);
         //return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(movie));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        return repository.findById(id).map(recordFound -> {
+            repository.deleteById(id);
+            return ResponseEntity.noContent().<Void>build();
+        }).orElse(ResponseEntity.notFound().build());
     }
 }
