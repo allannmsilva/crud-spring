@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@SQLDelete(sql = "UPDATE ACTOR SET STATUS = 'Inactive' WHERE ID = ?")
+@SQLDelete(sql = "UPDATE MOVIE SET STATUS = 'Inactive' WHERE ID = ?")
 @Where(clause = "status = 'Active'")
-public class Actor {
+public class Movie {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -35,10 +35,16 @@ public class Actor {
     @Convert(converter = EStatusConverter.class)
     private EStatus status = EStatus.ACTIVE;
 
-    @ManyToMany(mappedBy = "actors")
-    private List<Movie> movies = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "director_id", nullable = false)
+    private Director director;
 
-    public Actor() {
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "cast", joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "actor_id"))
+    private List<Actor> actors = new ArrayList<>();
+
+    public Movie() {
     }
 
     public Long getId() {
@@ -49,11 +55,11 @@ public class Actor {
         this.id = id;
     }
 
-    public Actor(String name) {
+    public Movie(String name) {
         this.name = name;
     }
 
-    public Actor(Long id, String name) {
+    public Movie(Long id, String name) {
         this.name = name;
     }
 
@@ -89,7 +95,7 @@ public class Actor {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Actor other = (Actor) obj;
+        Movie other = (Movie) obj;
         if (id == null) {
             if (other.id != null)
                 return false;
@@ -102,7 +108,7 @@ public class Actor {
 
     @Override
     public String toString() {
-        return "Actor [id=" + id + ", name=" + name + "]";
+        return "Movie [id=" + id + ", name=" + name + "]";
     }
 
 }

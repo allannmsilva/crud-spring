@@ -11,13 +11,13 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.Length;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Entity
-@SQLDelete(sql = "UPDATE ACTOR SET STATUS = 'Inactive' WHERE ID = ?")
+@SQLDelete(sql = "UPDATE CLASS SET STATUS = 'Inactive' WHERE ID = ?")
 @Where(clause = "status = 'Active'")
-public class Actor {
+public class Class {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -31,14 +31,35 @@ public class Actor {
     private String name;
 
     @NotNull
+    @NotBlank
+    @Column(nullable = false)
+    private double worth;
+
+    @NotNull
+    @NotBlank
+    @Column(nullable = false)
+    @Temporal(TemporalType.DATE)
+    private Date devolutionDate;
+
+    @NotNull
     @Column(length = 10, nullable = false)
     @Convert(converter = EStatusConverter.class)
     private EStatus status = EStatus.ACTIVE;
 
-    @ManyToMany(mappedBy = "actors")
-    private List<Movie> movies = new ArrayList<>();
+    public Class() {
+    }
 
-    public Actor() {
+    public Class(String name, double worth, Date devolutionDate) {
+        this.name = name;
+        this.worth = worth;
+        this.devolutionDate = devolutionDate;
+    }
+
+    public Class(Long id, String name, double worth, Date devolutionDate) {
+        this.id = id;
+        this.name = name;
+        this.worth = worth;
+        this.devolutionDate = devolutionDate;
     }
 
     public Long getId() {
@@ -49,11 +70,11 @@ public class Actor {
         this.id = id;
     }
 
-    public Actor(String name) {
+    public Class(String name) {
         this.name = name;
     }
 
-    public Actor(Long id, String name) {
+    public Class(Long id, String name) {
         this.name = name;
     }
 
@@ -63,6 +84,22 @@ public class Actor {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public double getWorth() {
+        return worth;
+    }
+
+    public void setWorth(double worth) {
+        this.worth = worth;
+    }
+
+    public Date getDevolutionDate() {
+        return devolutionDate;
+    }
+
+    public void setDevolutionDate(Date devolutionDate) {
+        this.devolutionDate = devolutionDate;
     }
 
     public EStatus getStatus() {
@@ -89,7 +126,7 @@ public class Actor {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Actor other = (Actor) obj;
+        Class other = (Class) obj;
         if (id == null) {
             if (other.id != null)
                 return false;
@@ -102,7 +139,7 @@ public class Actor {
 
     @Override
     public String toString() {
-        return "Actor [id=" + id + ", name=" + name + "]";
+        return "Class [id=" + id + ", name=" + name + "worth=" + worth + "devolutionDate=" + new SimpleDateFormat("yyyy/MM/dd").format(devolutionDate) + "]";
     }
 
 }

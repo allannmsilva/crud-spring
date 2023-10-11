@@ -3,7 +3,6 @@ package com.allan.videolocadora.model;
 import com.allan.videolocadora.enumeration.EStatus;
 import com.allan.videolocadora.enumeration.converter.EStatusConverter;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -15,10 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@SQLDelete(sql = "UPDATE ACTOR SET STATUS = 'Inactive' WHERE ID = ?")
+@SQLDelete(sql = "UPDATE DIRECTOR SET STATUS = 'Inactive' WHERE ID = ?")
 @Where(clause = "status = 'Active'")
-public class Actor {
-
+public class Director {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonProperty("_id")
@@ -35,10 +33,10 @@ public class Actor {
     @Convert(converter = EStatusConverter.class)
     private EStatus status = EStatus.ACTIVE;
 
-    @ManyToMany(mappedBy = "actors")
-    private List<Movie> movies = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "director")
+    List<Movie> movies = new ArrayList<>();
 
-    public Actor() {
+    public Director() {
     }
 
     public Long getId() {
@@ -49,11 +47,11 @@ public class Actor {
         this.id = id;
     }
 
-    public Actor(String name) {
+    public Director(String name) {
         this.name = name;
     }
 
-    public Actor(Long id, String name) {
+    public Director(Long id, String name) {
         this.name = name;
     }
 
@@ -89,7 +87,7 @@ public class Actor {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Actor other = (Actor) obj;
+        Director other = (Director) obj;
         if (id == null) {
             if (other.id != null)
                 return false;
@@ -102,7 +100,6 @@ public class Actor {
 
     @Override
     public String toString() {
-        return "Actor [id=" + id + ", name=" + name + "]";
+        return "Director [id=" + id + ", name=" + name + "]";
     }
-
 }
