@@ -11,9 +11,6 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.Length;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @SQLDelete(sql = "UPDATE ACTOR SET STATUS = 'Inactive' WHERE ID = ?")
 @Where(clause = "status = 'Active'")
@@ -34,9 +31,6 @@ public class Actor {
     @Column(length = 10, nullable = false)
     @Convert(converter = EStatusConverter.class)
     private EStatus status = EStatus.ACTIVE;
-
-    @ManyToMany(mappedBy = "actors")
-    private List<Movie> movies = new ArrayList<>();
 
     public Actor() {
     }

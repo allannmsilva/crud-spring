@@ -33,9 +33,6 @@ public class Director {
     @Convert(converter = EStatusConverter.class)
     private EStatus status = EStatus.ACTIVE;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "director")
-    List<Movie> movies = new ArrayList<>();
-
     public Director() {
     }
 

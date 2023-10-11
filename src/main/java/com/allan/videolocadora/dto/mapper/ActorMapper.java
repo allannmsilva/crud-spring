@@ -1,7 +1,6 @@
 package com.allan.videolocadora.dto.mapper;
 
 import com.allan.videolocadora.dto.ActorDTO;
-import com.allan.videolocadora.enumeration.EStatus;
 import com.allan.videolocadora.model.Actor;
 import org.springframework.stereotype.Component;
 

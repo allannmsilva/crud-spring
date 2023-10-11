@@ -31,12 +31,10 @@ public class Class {
     private String name;
 
     @NotNull
-    @NotBlank
     @Column(nullable = false)
     private double worth;
 
     @NotNull
-    @NotBlank
     @Column(nullable = false)
     @Temporal(TemporalType.DATE)
     private Date devolutionDate;
@@ -71,10 +69,6 @@ public class Class {
     }
 
     public Class(String name) {
-        this.name = name;
-    }
-
-    public Class(Long id, String name) {
         this.name = name;
     }
 
