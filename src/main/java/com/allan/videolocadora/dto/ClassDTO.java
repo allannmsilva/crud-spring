@@ -14,10 +14,9 @@ public record ClassDTO(@JsonProperty("_id")
                        Long id,
                        @NotNull @NotBlank @Length(min = 2, max = 100)
                        String name,
-                       @NotNull @NotBlank
+                       @NotNull
                        double worth,
                        @NotNull
-                       @NotBlank
                        @Temporal(TemporalType.DATE)
                        Date devolutionDate) {
 }

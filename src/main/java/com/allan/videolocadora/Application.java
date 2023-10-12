@@ -19,14 +19,4 @@ public class Application {
 		SpringApplication.run(Application.class, args);
 	}
 
-	@Bean
-	CommandLineRunner initDatabase(ActorRepository actorRepository, ClassRepository classRepository) {
-		return args -> {
-			actorRepository.deleteAll();
-			actorRepository.save(new Actor("Ryan Reynolds"));
-			classRepository.deleteAll();
-			classRepository.save(new Class("Class", 10.5, new Date()));
-		};
-	}
-
 }
