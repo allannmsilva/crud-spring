@@ -11,9 +11,9 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.Length;
 
+import java.util.Set;
+
 @Entity
-@SQLDelete(sql = "UPDATE ACTOR SET STATUS = 'Inactive' WHERE ID = ?")
-@Where(clause = "status = 'Active'")
 public class Actor {
 
     @Id
@@ -27,10 +27,8 @@ public class Actor {
     @Column(length = 100, nullable = false, unique = true)
     private String name;
 
-    @NotNull
-    @Column(length = 10, nullable = false)
-    @Convert(converter = EStatusConverter.class)
-    private EStatus status = EStatus.ACTIVE;
+    @ManyToMany(mappedBy = "actors")
+    private Set<Movie> movies;
 
     public Actor() {
     }
@@ -59,12 +57,8 @@ public class Actor {
         this.name = name;
     }
 
-    public EStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(EStatus status) {
-        this.status = status;
+    public Set<Movie> getMovies() {
+        return movies;
     }
 
     @Override

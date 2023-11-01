@@ -13,6 +13,7 @@ import org.hibernate.validator.constraints.Length;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @SQLDelete(sql = "UPDATE CLASS SET STATUS = 'Inactive' WHERE ID = ?")
@@ -43,6 +44,9 @@ public class Class {
     @Column(length = 10, nullable = false)
     @Convert(converter = EStatusConverter.class)
     private EStatus status = EStatus.ACTIVE;
+
+    @OneToMany(mappedBy = "c")
+    private Set<Movie> movies;
 
     public Class() {
     }
@@ -102,6 +106,10 @@ public class Class {
 
     public void setStatus(EStatus status) {
         this.status = status;
+    }
+
+    public Set<Movie> getMovies() {
+        return movies;
     }
 
     @Override

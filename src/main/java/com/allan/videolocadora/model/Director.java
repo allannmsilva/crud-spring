@@ -12,10 +12,9 @@ import org.hibernate.validator.constraints.Length;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity
-@SQLDelete(sql = "UPDATE DIRECTOR SET STATUS = 'Inactive' WHERE ID = ?")
-@Where(clause = "status = 'Active'")
 public class Director {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -28,10 +27,8 @@ public class Director {
     @Column(length = 100, nullable = false, unique = true)
     private String name;
 
-    @NotNull
-    @Column(length = 10, nullable = false)
-    @Convert(converter = EStatusConverter.class)
-    private EStatus status = EStatus.ACTIVE;
+    @OneToMany(mappedBy = "director")
+    private Set<Movie> movies;
 
     public Director() {
     }
@@ -60,12 +57,8 @@ public class Director {
         this.name = name;
     }
 
-    public EStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(EStatus status) {
-        this.status = status;
+    public Set<Movie> getMovies() {
+        return movies;
     }
 
     @Override
