@@ -1,10 +1,13 @@
 package com.allan.videolocadora.service;
 
 import com.allan.videolocadora.dto.MovieDTO;
+import com.allan.videolocadora.dto.mapper.ClassMapper;
+import com.allan.videolocadora.dto.mapper.DirectorMapper;
 import com.allan.videolocadora.dto.mapper.MovieMapper;
 import com.allan.videolocadora.enumeration.converter.ECategoryConverter;
 import com.allan.videolocadora.exception.RecordNotFoundException;
-import com.allan.videolocadora.model.Actor;
+import com.allan.videolocadora.model.Director;
+import com.allan.videolocadora.model.Class;
 import com.allan.videolocadora.model.Movie;
 import com.allan.videolocadora.repository.MovieRepository;
 import jakarta.validation.Valid;
@@ -22,11 +25,12 @@ public class MovieService {
 
     private final MovieRepository repository;
     private final MovieMapper mapper;
-    private ECategoryConverter converter;
+    private final ECategoryConverter converter;
 
     public MovieService(MovieRepository repository, MovieMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
+        converter = new ECategoryConverter();
     }
 
     public List<MovieDTO> getList() {
@@ -51,9 +55,10 @@ public class MovieService {
                     movieFound.setYear(dto.year());
                     movieFound.setSynopsis(dto.synopsis());
                     movieFound.setCategory(converter.convertToEntityAttribute(dto.category()));
-                    movieFound.setDirector(dto.director());
-                    movieFound.getActors().clear();
-                    movie.getActors().forEach(movieFound.getActors()::add);
+                    movieFound.setDirector(new Director(dto.director().id(), dto.director().name()));
+                    movieFound.setC(new Class(dto.c().id(), dto.c().name(), dto.c().worth(), dto.c().devolutionDate()));
+                    movieFound.getCast().clear();
+                    movie.getCast().forEach(movieFound.getCast()::add);
                     return mapper.toDto(repository.save(movieFound));
                 })
                 .orElseThrow(() -> new RecordNotFoundException(id));

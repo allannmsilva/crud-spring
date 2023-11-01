@@ -27,8 +27,8 @@ public class Director {
     @Column(length = 100, nullable = false, unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "director")
-    private Set<Movie> movies;
+//    @OneToMany(mappedBy = "director")
+//    private Set<Movie> movies;
 
     public Director() {
     }
@@ -57,9 +57,9 @@ public class Director {
         this.name = name;
     }
 
-    public Set<Movie> getMovies() {
-        return movies;
-    }
+//    public Set<Movie> getMovies() {
+//        return movies;
+//    }
 
     @Override
     public int hashCode() {

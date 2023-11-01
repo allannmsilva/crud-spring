@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
 
 import java.util.Set;
@@ -27,7 +26,6 @@ public class Movie {
     private String name;
 
     @NotNull
-    @Length(min = 4, max = 4)
     @Column(length = 4, nullable = false)
     private int year;
 
@@ -41,43 +39,44 @@ public class Movie {
     @Column(nullable = false)
     private ECategory category;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "director_id", nullable = false)
     private Director director;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "class_id", nullable = false)
     private Class c;
 
     @ManyToMany
-    @JoinTable(
-            name = "movie_actors",
+    @JoinTable(name = "movie_actors",
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "actor_id"))
-    private Set<Actor> actors;
+    private Set<Actor> cast;
 
     public Movie() {
     }
 
-    public Movie(Long id, String name, int year, String synopsis, String category, Director director, Class c, Set<Actor> actors) {
+    public Movie(Long id, String name, int year, String synopsis, String category, Director director, Class c, Set<Actor> cast) {
         this.id = id;
         this.name = name;
         this.year = year;
         this.synopsis = synopsis;
-        this.category = ECategory.valueOf(category);
+        this.category = getConverter().convertToEntityAttribute(category);
         this.director = director;
         this.c = c;
-        this.actors = actors;
+        this.cast = cast;
     }
 
-    public Movie(String name, int year, String synopsis, String category, Director director, Class c, Set<Actor> actors) {
+    public Movie(String name, int year, String synopsis, String category, Director director, Class c, Set<Actor> cast) {
         this.name = name;
         this.year = year;
         this.synopsis = synopsis;
-        this.category = ECategory.valueOf(category);
+        this.category = getConverter().convertToEntityAttribute(category);
         this.director = director;
         this.c = c;
-        this.actors = actors;
+        this.cast = cast;
     }
 
     public Long getId() {
@@ -124,8 +123,8 @@ public class Movie {
         this.category = category;
     }
 
-    public Set<Actor> getActors() {
-        return actors;
+    public Set<Actor> getCast() {
+        return cast;
     }
 
     public Class getC() {
@@ -169,6 +168,10 @@ public class Movie {
         if (name == null) {
             return other.name == null;
         } else return name.equals(other.name);
+    }
+
+    private ECategoryConverter getConverter() {
+        return new ECategoryConverter();
     }
 
     @Override

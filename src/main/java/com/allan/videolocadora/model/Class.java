@@ -16,8 +16,6 @@ import java.util.Date;
 import java.util.Set;
 
 @Entity
-@SQLDelete(sql = "UPDATE CLASS SET STATUS = 'Inactive' WHERE ID = ?")
-@Where(clause = "status = 'Active'")
 public class Class {
 
     @Id
@@ -40,13 +38,8 @@ public class Class {
     @Temporal(TemporalType.DATE)
     private Date devolutionDate;
 
-    @NotNull
-    @Column(length = 10, nullable = false)
-    @Convert(converter = EStatusConverter.class)
-    private EStatus status = EStatus.ACTIVE;
-
-    @OneToMany(mappedBy = "c")
-    private Set<Movie> movies;
+//    @OneToMany(mappedBy = "c")
+//    private Set<Movie> movies;
 
     public Class() {
     }
@@ -100,17 +93,9 @@ public class Class {
         this.devolutionDate = devolutionDate;
     }
 
-    public EStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(EStatus status) {
-        this.status = status;
-    }
-
-    public Set<Movie> getMovies() {
-        return movies;
-    }
+//    public Set<Movie> getMovies() {
+//        return movies;
+//    }
 
     @Override
     public int hashCode() {
