@@ -6,8 +6,6 @@ import com.allan.videolocadora.dto.mapper.DirectorMapper;
 import com.allan.videolocadora.dto.mapper.MovieMapper;
 import com.allan.videolocadora.enumeration.converter.ECategoryConverter;
 import com.allan.videolocadora.exception.RecordNotFoundException;
-import com.allan.videolocadora.model.Director;
-import com.allan.videolocadora.model.Class;
 import com.allan.videolocadora.model.Movie;
 import com.allan.videolocadora.repository.MovieRepository;
 import jakarta.validation.Valid;
@@ -26,6 +24,8 @@ public class MovieService {
     private final MovieRepository repository;
     private final MovieMapper mapper;
     private final ECategoryConverter converter;
+    private final ClassMapper classMapper = new ClassMapper();
+    private final DirectorMapper directorMapper = new DirectorMapper();
 
     public MovieService(MovieRepository repository, MovieMapper mapper) {
         this.repository = repository;
@@ -55,8 +55,8 @@ public class MovieService {
                     movieFound.setYear(dto.year());
                     movieFound.setSynopsis(dto.synopsis());
                     movieFound.setCategory(converter.convertToEntityAttribute(dto.category()));
-                    movieFound.setDirector(new Director(dto.director().id(), dto.director().name()));
-                    movieFound.setC(new Class(dto.c().id(), dto.c().name(), dto.c().worth(), dto.c().devolutionDate()));
+                    movieFound.setDirector(directorMapper.toEntity(dto.director()));
+                    movieFound.setC(classMapper.toEntity(dto.c()));
                     movieFound.getCast().clear();
                     movie.getCast().forEach(movieFound.getCast()::add);
                     return mapper.toDto(repository.save(movieFound));
