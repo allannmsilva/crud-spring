@@ -12,8 +12,8 @@ import java.util.Date;
 
 public record ItemDTO(@JsonProperty("_id")
                       Long id,
-                      @NotNull @NotBlank @Length(min = 2, max = 100)
-                      String title,
+                      @NotNull
+                      MovieDTO movie,
                       @NotNull
                       int serialNumber,
                       @ValueOfEnum(enumClass = EItemType.class)

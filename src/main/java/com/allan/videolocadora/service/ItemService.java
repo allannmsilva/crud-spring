@@ -57,8 +57,8 @@ public class ItemService implements ValidationService<ItemDTO> {
 
     @Override
     public void validateInsertUpdate(ItemDTO dto) {
-        if (dto.title() == null || dto.title().isBlank()) {
-            throw new RequiredFieldException("You must enter the title of the item!");
+        if (dto.movie() == null) {
+            throw new RequiredFieldException("You must enter the movie respective to the item!");
         }
 
         if (dto.type() == null || dto.type().isBlank()) {

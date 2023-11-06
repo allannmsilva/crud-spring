@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import org.hibernate.validator.constraints.Length;
 
 import java.util.Date;
 
@@ -19,11 +18,9 @@ public class Item {
     @JsonProperty("_id")
     private Long id;
 
-    @NotNull
-    @NotBlank
-    @Length(min = 2, max = 100)
-    @Column(length = 100, nullable = false, unique = true)
-    private String title;
+    @ManyToOne
+    @JoinColumn(name = "movie_id", nullable = false)
+    private Movie movie;
 
     @NotNull
     @Column(nullable = false)
@@ -42,16 +39,16 @@ public class Item {
     public Item() {
     }
 
-    public Item(Long id, String title, int serialNumber, String type, Date acquisitionDate) {
+    public Item(Long id, Movie movie, int serialNumber, String type, Date acquisitionDate) {
         this.id = id;
-        this.title = title;
+        this.movie = movie;
         this.serialNumber = serialNumber;
         this.type = getConverter().convertToEntityAttribute(type);
         this.acquisitionDate = acquisitionDate;
     }
 
-    public Item(String title, int serialNumber, String type, Date acquisitionDate) {
-        this.title = title;
+    public Item(Movie movie, int serialNumber, String type, Date acquisitionDate) {
+        this.movie = movie;
         this.serialNumber = serialNumber;
         this.type = getConverter().convertToEntityAttribute(type);
         this.acquisitionDate = acquisitionDate;
@@ -65,12 +62,12 @@ public class Item {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
+    public Movie getMovie() {
+        return movie;
     }
 
-    public void setTitle(String name) {
-        this.title = name;
+    public void setMovie(Movie movie) {
+        this.movie = movie;
     }
 
     public int getSerialNumber() {
@@ -119,9 +116,9 @@ public class Item {
                 return false;
         } else if (!id.equals(other.id))
             return false;
-        if (title == null) {
-            return other.title == null;
-        } else return title.equals(other.title);
+        if (movie == null) {
+            return other.movie == null;
+        } else return movie.equals(other.movie);
     }
 
     private EItemTypeConverter getConverter() {
@@ -130,7 +127,7 @@ public class Item {
 
     @Override
     public String toString() {
-        return "Item [id=" + id + ", name=" + title + "]";
+        return "Item [id=" + id + ", name=" + movie + "]";
     }
 
 }
