@@ -1,6 +1,10 @@
 package com.allan.videolocadora.service;
 
+import java.sql.SQLIntegrityConstraintViolationException;
+
 public interface ValidationService<DTO> {
 
-    void validateFields(DTO dto);
+    void validateInsertUpdate(DTO dto);
+
+    void validateDelete(DTO dto);
 }

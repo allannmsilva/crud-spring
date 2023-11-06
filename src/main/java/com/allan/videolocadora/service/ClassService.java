@@ -1,9 +1,12 @@
 package com.allan.videolocadora.service;
 
 import com.allan.videolocadora.dto.ClassDTO;
+import com.allan.videolocadora.dto.MovieDTO;
 import com.allan.videolocadora.dto.mapper.EntityMapper;
+import com.allan.videolocadora.exception.IntegrityConstraintException;
 import com.allan.videolocadora.exception.RecordNotFoundException;
 import com.allan.videolocadora.exception.RequiredFieldException;
+import com.allan.videolocadora.model.Class;
 import com.allan.videolocadora.repository.ClassRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -21,10 +24,12 @@ public class ClassService implements ValidationService<ClassDTO> {
 
     private final ClassRepository repository;
     private final EntityMapper mapper;
+    private final MovieService movieService;
 
-    public ClassService(ClassRepository repository, EntityMapper mapper) {
+    public ClassService(ClassRepository repository, EntityMapper mapper, MovieService movieService) {
         this.repository = repository;
         this.mapper = mapper;
+        this.movieService = movieService;
     }
 
     public List<ClassDTO> getList() {
@@ -38,12 +43,12 @@ public class ClassService implements ValidationService<ClassDTO> {
     }
 
     public ClassDTO insert(@Valid @NotNull ClassDTO dto) {
-        validateFields(dto);
+        validateInsertUpdate(dto);
         return mapper.toClassDTO(repository.save(mapper.toClassEntity(dto)));
     }
 
     public ClassDTO update(@NotNull @Positive Long id, @Valid @NotNull ClassDTO dto) {
-        validateFields(dto);
+        validateInsertUpdate(dto);
         return repository.findById(id) //
                 .map(classFound -> {
                     classFound = mapper.toClassEntity(dto);
@@ -53,12 +58,14 @@ public class ClassService implements ValidationService<ClassDTO> {
     }
 
     public void delete(@NotNull @Positive Long id) {
-        repository.delete(repository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException("Class not found!")));
+        Class c = repository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("Class not found!"));
+        validateDelete(mapper.toClassDTO(c));
+        repository.delete(c);
     }
 
     @Override
-    public void validateFields(ClassDTO dto) {
+    public void validateInsertUpdate(ClassDTO dto) {
         if (dto.name() == null || dto.name().isBlank()) {
             throw new RequiredFieldException("You must enter the class name!");
         }
@@ -69,6 +76,15 @@ public class ClassService implements ValidationService<ClassDTO> {
 
         if (dto.worth() == 0.0d) {
             throw new RequiredFieldException("You must enter the class worth!");
+        }
+    }
+
+    @Override
+    public void validateDelete(ClassDTO dto) {
+        for (MovieDTO movie : movieService.getList()) {
+            if (movie.c().equals(dto)) {
+                throw new IntegrityConstraintException("Class is being used in the movie " + movie.name() + "!");
+            }
         }
     }
 }

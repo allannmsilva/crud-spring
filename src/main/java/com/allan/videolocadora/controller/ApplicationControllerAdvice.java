@@ -1,6 +1,7 @@
 package com.allan.videolocadora.controller;
 
 import com.allan.videolocadora.exception.FieldLengthException;
+import com.allan.videolocadora.exception.IntegrityConstraintException;
 import com.allan.videolocadora.exception.RecordNotFoundException;
 import com.allan.videolocadora.exception.RequiredFieldException;
 import org.springframework.http.HttpStatus;
@@ -27,5 +28,11 @@ public class ApplicationControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleRequiredFieldException(RequiredFieldException requiredFieldException) {
         return requiredFieldException.getMessage();
+    }
+
+    @ExceptionHandler(IntegrityConstraintException.class)
+    @ResponseStatus(HttpStatus.IM_USED)
+    public String handleIntegrityConstraintException(IntegrityConstraintException integrityConstraintException) {
+        return integrityConstraintException.getMessage();
     }
 }

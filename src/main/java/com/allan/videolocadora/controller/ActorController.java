@@ -1,5 +1,6 @@
 package com.allan.videolocadora.controller;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 import com.allan.videolocadora.dto.ActorDTO;

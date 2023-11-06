@@ -25,14 +25,10 @@ public class MovieService implements ValidationService<MovieDTO> {
 
     private final MovieRepository repository;
     private final EntityMapper mapper;
-    private final ClassService classService;
-    private final DirectorService directorService;
 
-    public MovieService(MovieRepository repository, EntityMapper mapper, ClassService classService, DirectorService directorService) {
+    public MovieService(MovieRepository repository, EntityMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
-        this.classService = classService;
-        this.directorService = directorService;
     }
 
     public List<MovieDTO> getList() {
@@ -46,16 +42,12 @@ public class MovieService implements ValidationService<MovieDTO> {
     }
 
     public MovieDTO insert(@Valid @NotNull MovieDTO dto) {
-        validateFields(dto);
-        classService.findById(dto.c().id());
-        directorService.findById(dto.director().id());
+        validateInsertUpdate(dto);
         return mapper.toMovieDTO(repository.save(mapper.toMovieEntity(dto)));
     }
 
     public MovieDTO update(@NotNull @Positive Long id, @Valid @NotNull MovieDTO dto) {
-        validateFields(dto);
-        classService.findById(dto.c().id());
-        directorService.findById(dto.director().id());
+        validateInsertUpdate(dto);
         return repository.findById(id) //
                 .map(movieFound -> {
                     movieFound = mapper.toMovieEntity(dto);
@@ -70,7 +62,7 @@ public class MovieService implements ValidationService<MovieDTO> {
     }
 
     @Override
-    public void validateFields(MovieDTO dto) {
+    public void validateInsertUpdate(MovieDTO dto) {
         if (dto.name() == null || dto.name().isBlank()) {
             throw new RequiredFieldException("You must enter the movie name!");
         }
@@ -85,6 +77,14 @@ public class MovieService implements ValidationService<MovieDTO> {
 
         if (dto.cast().isEmpty()) {
             throw new RequiredFieldException("You must enter the movie's cast!");
+        }
+
+        if (dto.director() == null) {
+            throw new RequiredFieldException("You must enter the movie's director!");
+        }
+
+        if (dto.c() == null) {
+            throw new RequiredFieldException("You must enter the movie's class!");
         }
 
         if (dto.name().length() < 2) {
@@ -102,5 +102,10 @@ public class MovieService implements ValidationService<MovieDTO> {
         if (dto.year() <= 1894 || dto.year() > year) {
             throw new FieldLengthException("You must choose a year between 1895 and " + year);
         }
+    }
+
+    @Override
+    public void validateDelete(MovieDTO dto) {
+
     }
 }

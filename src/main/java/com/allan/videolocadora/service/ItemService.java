@@ -56,7 +56,7 @@ public class ItemService implements ValidationService<ItemDTO> {
     }
 
     @Override
-    public void validateFields(ItemDTO dto) {
+    public void validateInsertUpdate(ItemDTO dto) {
         if (dto.title() == null || dto.title().isBlank()) {
             throw new RequiredFieldException("You must enter the title of the item!");
         }
@@ -72,5 +72,10 @@ public class ItemService implements ValidationService<ItemDTO> {
         if (dto.acquisitionDate() == null) {
             throw new RequiredFieldException("You must enter the acquisition date of the item!");
         }
+    }
+
+    @Override
+    public void validateDelete(ItemDTO dto) {
+
     }
 }
