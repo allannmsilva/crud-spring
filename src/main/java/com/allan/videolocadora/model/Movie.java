@@ -8,8 +8,10 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
+import org.mapstruct.Mapper;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Movie {
@@ -39,12 +41,10 @@ public class Movie {
     @Column(nullable = false)
     private ECategory category;
 
-    @NotNull
     @ManyToOne
     @JoinColumn(name = "director_id", nullable = false)
     private Director director;
 
-    @NotNull
     @ManyToOne
     @JoinColumn(name = "class_id", nullable = false)
     private Class c;
@@ -53,12 +53,12 @@ public class Movie {
     @JoinTable(name = "movie_actors",
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "actor_id"))
-    private Set<Actor> cast;
+    private List<Actor> cast = new ArrayList<>();
 
     public Movie() {
     }
 
-    public Movie(Long id, String name, int year, String synopsis, String category, Director director, Class c, Set<Actor> cast) {
+    public Movie(Long id, String name, int year, String synopsis, String category, Director director, Class c, List<Actor> cast) {
         this.id = id;
         this.name = name;
         this.year = year;
@@ -69,7 +69,7 @@ public class Movie {
         this.cast = cast;
     }
 
-    public Movie(String name, int year, String synopsis, String category, Director director, Class c, Set<Actor> cast) {
+    public Movie(String name, int year, String synopsis, String category, Director director, Class c, List<Actor> cast) {
         this.name = name;
         this.year = year;
         this.synopsis = synopsis;
@@ -123,7 +123,7 @@ public class Movie {
         this.category = category;
     }
 
-    public Set<Actor> getCast() {
+    public List<Actor> getCast() {
         return cast;
     }
 

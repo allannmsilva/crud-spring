@@ -6,13 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.Length;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 @Entity
 public class Director {
@@ -28,7 +22,7 @@ public class Director {
     private String name;
 
 //    @OneToMany(mappedBy = "director")
-//    private Set<Movie> movies;
+//    private List<Movie> movies;
 
     public Director() {
     }
@@ -57,7 +51,7 @@ public class Director {
         this.name = name;
     }
 
-//    public Set<Movie> getMovies() {
+//    public List<Movie> getMovies() {
 //        return movies;
 //    }
 

@@ -10,7 +10,7 @@ import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 public record ClassDTO(@JsonProperty("_id")
                        Long id,

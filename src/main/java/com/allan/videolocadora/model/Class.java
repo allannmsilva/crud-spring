@@ -13,7 +13,7 @@ import org.hibernate.validator.constraints.Length;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 public class Class {
@@ -39,7 +39,7 @@ public class Class {
     private Date devolutionDate;
 
 //    @OneToMany(mappedBy = "c")
-//    private Set<Movie> movies;
+//    private List<Movie> movies;
 
     public Class() {
     }
@@ -93,7 +93,7 @@ public class Class {
         this.devolutionDate = devolutionDate;
     }
 
-//    public Set<Movie> getMovies() {
+//    public List<Movie> getMovies() {
 //        return movies;
 //    }
 

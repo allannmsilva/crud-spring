@@ -1,8 +1,9 @@
 package com.allan.videolocadora.service;
 
 import com.allan.videolocadora.dto.ClassDTO;
-import com.allan.videolocadora.dto.mapper.ClassMapper;
+import com.allan.videolocadora.dto.mapper.EntityMapper;
 import com.allan.videolocadora.exception.RecordNotFoundException;
+import com.allan.videolocadora.exception.RequiredFieldException;
 import com.allan.videolocadora.repository.ClassRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -12,46 +13,62 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Validated
 @Service
-public class ClassService {
+public class ClassService implements ValidationService<ClassDTO> {
 
     private final ClassRepository repository;
-    private final ClassMapper mapper;
+    private final EntityMapper mapper;
 
-    public ClassService(ClassRepository repository, ClassMapper mapper) {
+    public ClassService(ClassRepository repository, EntityMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
     }
 
     public List<ClassDTO> getList() {
-        return repository.findAll().stream().map(mapper::toDto).toList();
+        return repository.findAll().stream().map(mapper::toClassDTO).collect(Collectors.toList());
     }
 
     public ClassDTO findById(@PathVariable @Positive @NotNull Long id) {
-        return repository.findById(id).map(mapper::toDto).orElseThrow(
-                () -> new RecordNotFoundException(id)
+        return repository.findById(id).map(mapper::toClassDTO).orElseThrow(
+                () -> new RecordNotFoundException("Class not found!")
         );
     }
 
     public ClassDTO insert(@Valid @NotNull ClassDTO dto) {
-        return mapper.toDto(repository.save(mapper.toEntity(dto)));
+        validateFields(dto);
+        return mapper.toClassDTO(repository.save(mapper.toClassEntity(dto)));
     }
 
     public ClassDTO update(@NotNull @Positive Long id, @Valid @NotNull ClassDTO dto) {
+        validateFields(dto);
         return repository.findById(id) //
                 .map(classFound -> {
-                    classFound.setName(dto.name());
-                    classFound.setWorth(dto.worth());
-                    classFound.setDevolutionDate(dto.devolutionDate());
-                    return mapper.toDto(repository.save(classFound));
+                    classFound = mapper.toClassEntity(dto);
+                    return mapper.toClassDTO(repository.save(classFound));
                 })
-                .orElseThrow(() -> new RecordNotFoundException(id));
+                .orElseThrow(() -> new RecordNotFoundException("Class not found!"));
     }
 
     public void delete(@NotNull @Positive Long id) {
         repository.delete(repository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException(id)));
+                .orElseThrow(() -> new RecordNotFoundException("Class not found!")));
+    }
+
+    @Override
+    public void validateFields(ClassDTO dto) {
+        if (dto.name() == null || dto.name().isBlank()) {
+            throw new RequiredFieldException("You must enter the class name!");
+        }
+
+        if (dto.devolutionDate() == null) {
+            throw new RequiredFieldException("You must enter the class devolution date!");
+        }
+
+        if (dto.worth() == 0.0d) {
+            throw new RequiredFieldException("You must enter the class worth!");
+        }
     }
 }

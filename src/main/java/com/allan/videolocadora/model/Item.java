@@ -10,7 +10,6 @@ import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
 import java.util.Date;
-import java.util.Set;
 
 @Entity
 public class Item {
@@ -33,7 +32,7 @@ public class Item {
     @NotNull
     @Convert(converter = EItemTypeConverter.class)
     @Column(nullable = false)
-    private EItemType itemType;
+    private EItemType type;
 
     @NotNull
     @Column(nullable = false)
@@ -43,18 +42,18 @@ public class Item {
     public Item() {
     }
 
-    public Item(Long id, String title, int serialNumber, String itemType, Date acquisitionDate) {
+    public Item(Long id, String title, int serialNumber, String type, Date acquisitionDate) {
         this.id = id;
         this.title = title;
         this.serialNumber = serialNumber;
-        this.itemType = getConverter().convertToEntityAttribute(itemType);
+        this.type = getConverter().convertToEntityAttribute(type);
         this.acquisitionDate = acquisitionDate;
     }
 
-    public Item(String title, int serialNumber, String itemType, Date acquisitionDate) {
+    public Item(String title, int serialNumber, String type, Date acquisitionDate) {
         this.title = title;
         this.serialNumber = serialNumber;
-        this.itemType = getConverter().convertToEntityAttribute(itemType);
+        this.type = getConverter().convertToEntityAttribute(type);
         this.acquisitionDate = acquisitionDate;
     }
 
@@ -82,12 +81,12 @@ public class Item {
         this.serialNumber = serialNumber;
     }
 
-    public EItemType getItemType() {
-        return itemType;
+    public EItemType getType() {
+        return type;
     }
 
-    public void setItemType(@NotNull @NotBlank EItemType itemType) {
-        this.itemType = itemType;
+    public void setType(@NotNull @NotBlank EItemType type) {
+        this.type = type;
     }
 
     public Date getAcquisitionDate() {

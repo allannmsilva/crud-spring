@@ -1,5 +1,7 @@
 package com.allan.videolocadora.enumeration;
 
+import org.mapstruct.Mapper;
+
 public enum ECategory {
     HORROR("Horror"), THRILLER("Thriller"),
     COMEDY("Comedy"), ROMANCE("Romance");

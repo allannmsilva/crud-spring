@@ -1,17 +1,13 @@
 package com.allan.videolocadora.model;
 
-import com.allan.videolocadora.enumeration.EStatus;
-import com.allan.videolocadora.enumeration.converter.EStatusConverter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.Length;
 
-import java.util.Set;
+import java.util.List;
 
 @Entity
 public class Actor {
@@ -27,8 +23,9 @@ public class Actor {
     @Column(length = 100, nullable = false, unique = true)
     private String name;
 
-    @ManyToMany(mappedBy = "cast")
-    private Set<Movie> movies;
+//    @NotNull
+//    @ManyToMany(mappedBy = "cast")
+//    private List<Movie> movies;
 
     public Actor() {
     }
@@ -57,9 +54,9 @@ public class Actor {
         this.name = name;
     }
 
-    public Set<Movie> getMovies() {
-        return movies;
-    }
+//    public List<Movie> getMovies() {
+//        return movies;
+//    }
 
     @Override
     public int hashCode() {
