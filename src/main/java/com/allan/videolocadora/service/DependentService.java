@@ -2,9 +2,11 @@ package com.allan.videolocadora.service;
 
 import com.allan.videolocadora.dto.DependentDTO;
 import com.allan.videolocadora.dto.mapper.EntityMapper;
+import com.allan.videolocadora.enumeration.EStatus;
 import com.allan.videolocadora.exception.FieldLengthException;
 import com.allan.videolocadora.exception.RecordNotFoundException;
 import com.allan.videolocadora.exception.RequiredFieldException;
+import com.allan.videolocadora.exception.ThreeDependentsException;
 import com.allan.videolocadora.model.Dependent;
 import com.allan.videolocadora.repository.DependentRepository;
 import jakarta.validation.Valid;
@@ -49,6 +51,15 @@ public class DependentService implements ValidationService<DependentDTO> {
         return repository.findById(id) //
                 .map(dependentFound -> {
                     dependentFound = mapper.toDependentEntity(dto);
+                    if (dependentFound.getPartner().getStatus().equals(EStatus.INACTIVE)) {
+                        dependentFound.setStatus(EStatus.INACTIVE);
+                    }
+                    if (dependentFound.getStatus().equals(EStatus.ACTIVE) && repository.findAll().stream()
+                            .filter(d -> d.getPartner().equals(mapper.toPartnerEntity(dto.partner())) &&
+                                    d.getStatus().equals(EStatus.ACTIVE))
+                            .toList().size() >= 3) {
+                        throw new ThreeDependentsException();
+                    }
                     return mapper.toDependentDTO(repository.save(dependentFound));
                 })
                 .orElseThrow(() -> new RecordNotFoundException("Dependent not found!"));

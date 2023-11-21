@@ -13,7 +13,7 @@ import java.util.Objects;
 @Entity
 public class Dependent extends Customer {
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne
     @JoinColumn(name = "partner_id", nullable = false)
     private Partner partner;
 

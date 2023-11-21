@@ -1,12 +1,15 @@
 package com.allan.videolocadora.service;
 
+import com.allan.videolocadora.dto.DependentDTO;
 import com.allan.videolocadora.dto.ItemDTO;
 import com.allan.videolocadora.dto.PartnerDTO;
 import com.allan.videolocadora.dto.mapper.EntityMapper;
+import com.allan.videolocadora.enumeration.EStatus;
 import com.allan.videolocadora.exception.FieldLengthException;
 import com.allan.videolocadora.exception.IntegrityConstraintException;
 import com.allan.videolocadora.exception.RecordNotFoundException;
 import com.allan.videolocadora.exception.RequiredFieldException;
+import com.allan.videolocadora.model.Dependent;
 import com.allan.videolocadora.model.Item;
 import com.allan.videolocadora.model.Partner;
 import com.allan.videolocadora.repository.PartnerRepository;
@@ -29,10 +32,12 @@ public class PartnerService implements ValidationService<PartnerDTO> {
 
     private final PartnerRepository repository;
     private final EntityMapper mapper;
+    private final DependentService dependentService;
 
-    public PartnerService(PartnerRepository repository, EntityMapper mapper) {
+    public PartnerService(PartnerRepository repository, EntityMapper mapper, DependentService dependentService) {
         this.repository = repository;
         this.mapper = mapper;
+        this.dependentService = dependentService;
     }
 
     public List<PartnerDTO> getList() {
@@ -52,12 +57,20 @@ public class PartnerService implements ValidationService<PartnerDTO> {
 
     public PartnerDTO update(@NotNull @Positive Long id, @Valid @NotNull PartnerDTO dto) {
         validateInsertUpdate(dto);
-        return repository.findById(id) //
+        PartnerDTO partnerDTO = repository.findById(id) //
                 .map(partnerFound -> {
                     partnerFound = mapper.toPartnerEntity(dto);
                     return mapper.toPartnerDTO(repository.save(partnerFound));
                 })
                 .orElseThrow(() -> new RecordNotFoundException("Partner not found!"));
+
+        if (partnerDTO.status().equals(EStatus.INACTIVE.getValue())) {
+            for (DependentDTO dependentDTO : dependentService.getList().stream().filter(d -> d.partner().equals(dto)).toList()) {
+                dependentService.update(dependentDTO.id(), dependentDTO);
+            }
+        }
+
+        return partnerDTO;
     }
 
     public void delete(@NotNull @Positive Long id) {
@@ -84,5 +97,8 @@ public class PartnerService implements ValidationService<PartnerDTO> {
 
     @Override
     public void validateDelete(PartnerDTO dto) {
+        for (DependentDTO dependentDTO : dependentService.getList().stream().filter(d -> d.partner().equals(dto)).toList()) {
+            dependentService.delete(dependentDTO.id());
+        }
     }
 }
