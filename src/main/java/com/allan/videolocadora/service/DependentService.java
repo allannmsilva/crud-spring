@@ -17,6 +17,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Validated
@@ -54,11 +55,20 @@ public class DependentService implements ValidationService<DependentDTO> {
                     if (dependentFound.getPartner().getStatus().equals(EStatus.INACTIVE)) {
                         dependentFound.setStatus(EStatus.INACTIVE);
                     }
-                    if (dependentFound.getStatus().equals(EStatus.ACTIVE) && repository.findAll().stream()
-                            .filter(d -> d.getPartner().equals(mapper.toPartnerEntity(dto.partner())) &&
-                                    d.getStatus().equals(EStatus.ACTIVE))
-                            .toList().size() >= 3) {
-                        throw new ThreeDependentsException();
+                    if (!Objects.equals(dto.status(), dependentFound.getStatus().getValue())) {
+                        if (dependentFound.getStatus().equals(EStatus.ACTIVE) && repository.findAll().stream()
+                                .filter(d -> d.getPartner().equals(mapper.toPartnerEntity(dto.partner())) &&
+                                        d.getStatus().equals(EStatus.ACTIVE))
+                                .toList().size() >= 3) {
+                            throw new ThreeDependentsException();
+                        }
+                    } else {
+                        if (dto.status().equals(EStatus.ACTIVE.getValue()) && repository.findAll().stream()
+                                .filter(d -> d.getPartner().equals(mapper.toPartnerEntity(dto.partner())) &&
+                                        d.getStatus().equals(EStatus.ACTIVE))
+                                .toList().size() >= 3) {
+                            throw new ThreeDependentsException();
+                        }
                     }
                     return mapper.toDependentDTO(repository.save(dependentFound));
                 })
