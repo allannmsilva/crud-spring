@@ -33,7 +33,7 @@ public class DirectorService implements ValidationService<DirectorDTO> {
     }
 
     public List<DirectorDTO> getList() {
-        return repository.findAll().stream().map(mapper::toDirectorDTO).collect(Collectors.toList());
+        return repository.findAll().stream().map(mapper::toDirectorDTO).toList();
     }
 
     public DirectorDTO findById(@PathVariable @Positive @NotNull Long id) {

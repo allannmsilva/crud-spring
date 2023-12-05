@@ -18,6 +18,7 @@ public record ClassDTO(@JsonProperty("_id")
                        String name,
                        @NotNull
                        double worth,
-                       @NotNull @Temporal(TemporalType.DATE)
-                       Date devolutionDate) {
+                       @NotNull
+                       @Column(length = 2, nullable = false)
+                       int returnDeadline) {
 }

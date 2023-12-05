@@ -1,12 +1,10 @@
 package com.allan.videolocadora.service;
 
 import com.allan.videolocadora.dto.DependentDTO;
+import com.allan.videolocadora.dto.LocationDTO;
 import com.allan.videolocadora.dto.mapper.EntityMapper;
 import com.allan.videolocadora.enumeration.EStatus;
-import com.allan.videolocadora.exception.FieldLengthException;
-import com.allan.videolocadora.exception.RecordNotFoundException;
-import com.allan.videolocadora.exception.RequiredFieldException;
-import com.allan.videolocadora.exception.ThreeDependentsException;
+import com.allan.videolocadora.exception.*;
 import com.allan.videolocadora.model.Dependent;
 import com.allan.videolocadora.repository.DependentRepository;
 import jakarta.validation.Valid;
@@ -26,14 +24,16 @@ public class DependentService implements ValidationService<DependentDTO> {
 
     private final DependentRepository repository;
     private final EntityMapper mapper;
+    private final LocationService locationService;
 
-    public DependentService(DependentRepository repository, EntityMapper mapper) {
+    public DependentService(DependentRepository repository, EntityMapper mapper, LocationService locationService) {
         this.repository = repository;
         this.mapper = mapper;
+        this.locationService = locationService;
     }
 
     public List<DependentDTO> getList() {
-        return repository.findAll().stream().map(mapper::toDependentDTO).collect(Collectors.toList());
+        return repository.findAll().stream().map(mapper::toDependentDTO).toList();
     }
 
     public DependentDTO findById(@PathVariable @Positive @NotNull Long id) {
@@ -84,6 +84,19 @@ public class DependentService implements ValidationService<DependentDTO> {
 
     @Override
     public void validateInsertUpdate(DependentDTO dto) {
+        if (dto.status().equals("Inactive")) {
+            for (LocationDTO locationDTO : locationService.getList().stream().filter(d -> d.customer().name().equals(dto.name())).toList()) {
+                throw new IntegrityConstraintException("Dependent is being used in a location!");
+            }
+        }
+
+        if(dto.status().equals("Active") &&  repository.findAll().stream()
+                .filter(d -> d.getPartner().equals(mapper.toPartnerEntity(dto.partner())) &&
+                        d.getStatus().equals(EStatus.ACTIVE))
+                .toList().size() >= 3){
+            throw new ThreeDependentsException();
+        }
+
         if (dto.name() == null || dto.name().isBlank()) {
             throw new RequiredFieldException("You must enter the dependent name!");
         }
@@ -99,5 +112,8 @@ public class DependentService implements ValidationService<DependentDTO> {
 
     @Override
     public void validateDelete(DependentDTO dto) {
+        for (LocationDTO locationDTO : locationService.getList().stream().filter(d -> d.customer().name().equals(dto.name())).toList()) {
+            throw new IntegrityConstraintException("Dependent is being used in a location!");
+        }
     }
 }

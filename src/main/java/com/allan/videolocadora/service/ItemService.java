@@ -1,7 +1,9 @@
 package com.allan.videolocadora.service;
 
 import com.allan.videolocadora.dto.ItemDTO;
+import com.allan.videolocadora.dto.LocationDTO;
 import com.allan.videolocadora.dto.mapper.EntityMapper;
+import com.allan.videolocadora.exception.IntegrityConstraintException;
 import com.allan.videolocadora.exception.RecordNotFoundException;
 import com.allan.videolocadora.exception.RequiredFieldException;
 import com.allan.videolocadora.repository.ItemRepository;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,14 +24,16 @@ public class ItemService implements ValidationService<ItemDTO> {
 
     private final ItemRepository repository;
     private final EntityMapper mapper;
+    private final LocationService locationService;
 
-    public ItemService(ItemRepository repository, EntityMapper mapper) {
+    public ItemService(ItemRepository repository, EntityMapper mapper, LocationService locationService) {
         this.repository = repository;
         this.mapper = mapper;
+        this.locationService = locationService;
     }
 
     public List<ItemDTO> getList() {
-        return repository.findAll().stream().map(mapper::toItemDTO).collect(Collectors.toList());
+        return repository.findAll().stream().map(mapper::toItemDTO).toList();
     }
 
     public ItemDTO findById(@PathVariable @Positive @NotNull Long id) {
@@ -76,6 +81,10 @@ public class ItemService implements ValidationService<ItemDTO> {
 
     @Override
     public void validateDelete(ItemDTO dto) {
-
+        for (LocationDTO locationDTO : locationService.getList()) {
+            if (locationDTO.item().equals(dto)) {
+                throw new IntegrityConstraintException("Item is being located till " + new SimpleDateFormat("MM/dd/yyyy").format(locationDTO.devolutionDate()));
+            }
+        }
     }
 }

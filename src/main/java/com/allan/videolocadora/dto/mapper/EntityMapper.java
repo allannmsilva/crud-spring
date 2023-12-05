@@ -1,14 +1,8 @@
 package com.allan.videolocadora.dto.mapper;
 
 import com.allan.videolocadora.dto.*;
-import com.allan.videolocadora.enumeration.ECategory;
-import com.allan.videolocadora.enumeration.EItemType;
-import com.allan.videolocadora.enumeration.ESex;
-import com.allan.videolocadora.enumeration.EStatus;
-import com.allan.videolocadora.enumeration.converter.ECategoryConverter;
-import com.allan.videolocadora.enumeration.converter.EItemTypeConverter;
-import com.allan.videolocadora.enumeration.converter.ESexConverter;
-import com.allan.videolocadora.enumeration.converter.EStatusConverter;
+import com.allan.videolocadora.enumeration.*;
+import com.allan.videolocadora.enumeration.converter.*;
 import com.allan.videolocadora.model.*;
 import com.allan.videolocadora.model.Class;
 import org.mapstruct.Mapper;
@@ -41,6 +35,11 @@ public interface EntityMapper {
 
     Movie toMovieEntity(MovieDTO movie);
 
+    //CUSTOMER
+    CustomerDTO toCustomerDTO(Customer customer);
+
+    Customer toCustomerEntity(CustomerDTO customerDTO);
+
     //PARTNER
     PartnerDTO toPartnerDTO(Partner partner);
 
@@ -50,6 +49,11 @@ public interface EntityMapper {
     DependentDTO toDependentDTO(Dependent dependent);
 
     Dependent toDependentEntity(DependentDTO dependentDTO);
+
+    //LOCATION
+    LocationDTO toLocationDTO(Location location);
+
+    Location toLocationEntity(LocationDTO locationDTO);
 
     //ENUMS
     @ValueMapping(source = "THRILLER", target = "Thriller")
@@ -80,6 +84,12 @@ public interface EntityMapper {
         return new EStatusConverter().convertToEntityAttribute(status);
     }
 
+    @ValueMapping(source = "YES", target = "Yes")
+    @ValueMapping(source = "NO", target = "No")
+    default EPaid getPaidEnumValue(String paid) {
+        return new EPaidConverter().convertToEntityAttribute(paid);
+    }
+
     @ValueMapping(source = "THRILLER", target = "Thriller")
     @ValueMapping(source = "ROMANCE", target = "Romance")
     @ValueMapping(source = "HORROR", target = "Horror")
@@ -106,5 +116,11 @@ public interface EntityMapper {
     @ValueMapping(source = "INACTIVE", target = "Inactive")
     default String getStatusValue(EStatus eStatus) {
         return new EStatusConverter().convertToDatabaseColumn(eStatus);
+    }
+
+    @ValueMapping(source = "YES", target = "Yes")
+    @ValueMapping(source = "NO", target = "No")
+    default String getPaidValue(EPaid ePaid) {
+        return new EPaidConverter().convertToDatabaseColumn(ePaid);
     }
 }

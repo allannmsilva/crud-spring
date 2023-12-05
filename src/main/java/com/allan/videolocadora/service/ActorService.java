@@ -34,7 +34,7 @@ public class ActorService implements ValidationService<ActorDTO> {
     }
 
     public List<ActorDTO> getList() {
-        return repository.findAll().stream().map(mapper::toActorDTO).collect(Collectors.toList());
+        return repository.findAll().stream().map(mapper::toActorDTO).toList();
     }
 
     public ActorDTO findById(@PathVariable @Positive @NotNull Long id) {

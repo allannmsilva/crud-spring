@@ -1,19 +1,11 @@
 package com.allan.videolocadora.model;
 
-import com.allan.videolocadora.enumeration.EStatus;
-import com.allan.videolocadora.enumeration.converter.EStatusConverter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.Length;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 
 @Entity
 public class Class {
@@ -34,9 +26,8 @@ public class Class {
     private double worth;
 
     @NotNull
-    @Column(nullable = false)
-    @Temporal(TemporalType.DATE)
-    private Date devolutionDate;
+    @Column(length = 2, nullable = false)
+    private int returnDeadline;
 
 //    @OneToMany(mappedBy = "c")
 //    private List<Movie> movies;
@@ -44,17 +35,17 @@ public class Class {
     public Class() {
     }
 
-    public Class(String name, double worth, Date devolutionDate) {
+    public Class(String name, double worth, int returnDeadline) {
         this.name = name;
         this.worth = worth;
-        this.devolutionDate = devolutionDate;
+        this.returnDeadline = returnDeadline;
     }
 
-    public Class(Long id, String name, double worth, Date devolutionDate) {
+    public Class(Long id, String name, double worth, int returnDeadline) {
         this.id = id;
         this.name = name;
         this.worth = worth;
-        this.devolutionDate = devolutionDate;
+        this.returnDeadline = returnDeadline;
     }
 
     public Long getId() {
@@ -85,12 +76,12 @@ public class Class {
         this.worth = worth;
     }
 
-    public Date getDevolutionDate() {
-        return devolutionDate;
+    public int getReturnDeadline() {
+        return returnDeadline;
     }
 
-    public void setDevolutionDate(Date devolutionDate) {
-        this.devolutionDate = devolutionDate;
+    public void setReturnDeadline(int returnDeadline) {
+        this.returnDeadline = returnDeadline;
     }
 
 //    public List<Movie> getMovies() {
@@ -126,7 +117,7 @@ public class Class {
 
     @Override
     public String toString() {
-        return "Class [id=" + id + ", name=" + name + "worth=" + worth + "devolutionDate=" + new SimpleDateFormat("yyyy/MM/dd").format(devolutionDate) + "]";
+        return "Class [id=" + id + ", name=" + name + "worth=" + worth + "returnDeadline=" + returnDeadline + "]";
     }
 
 }

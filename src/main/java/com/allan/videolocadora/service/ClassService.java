@@ -33,7 +33,7 @@ public class ClassService implements ValidationService<ClassDTO> {
     }
 
     public List<ClassDTO> getList() {
-        return repository.findAll().stream().map(mapper::toClassDTO).collect(Collectors.toList());
+        return repository.findAll().stream().map(mapper::toClassDTO).toList();
     }
 
     public ClassDTO findById(@PathVariable @Positive @NotNull Long id) {
@@ -70,8 +70,8 @@ public class ClassService implements ValidationService<ClassDTO> {
             throw new RequiredFieldException("You must enter the class name!");
         }
 
-        if (dto.devolutionDate() == null) {
-            throw new RequiredFieldException("You must enter the class devolution date!");
+        if (dto.returnDeadline() < 1) {
+            throw new RequiredFieldException("You must enter the class return deadline!");
         }
 
         if (dto.worth() == 0.0d) {

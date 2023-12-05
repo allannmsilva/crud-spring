@@ -38,7 +38,7 @@ public class MovieService implements ValidationService<MovieDTO> {
     }
 
     public List<MovieDTO> getList() {
-        return repository.findAll().stream().map(mapper::toMovieDTO).collect(Collectors.toList());
+        return repository.findAll().stream().map(mapper::toMovieDTO).toList();
     }
 
     public MovieDTO findById(@PathVariable @Positive @NotNull Long id) {

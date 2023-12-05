@@ -2,6 +2,7 @@ package com.allan.videolocadora.service;
 
 import com.allan.videolocadora.dto.DependentDTO;
 import com.allan.videolocadora.dto.ItemDTO;
+import com.allan.videolocadora.dto.LocationDTO;
 import com.allan.videolocadora.dto.PartnerDTO;
 import com.allan.videolocadora.dto.mapper.EntityMapper;
 import com.allan.videolocadora.enumeration.EStatus;
@@ -33,15 +34,17 @@ public class PartnerService implements ValidationService<PartnerDTO> {
     private final PartnerRepository repository;
     private final EntityMapper mapper;
     private final DependentService dependentService;
+    private final LocationService locationService;
 
-    public PartnerService(PartnerRepository repository, EntityMapper mapper, DependentService dependentService) {
+    public PartnerService(PartnerRepository repository, EntityMapper mapper, DependentService dependentService, LocationService locationService) {
         this.repository = repository;
         this.mapper = mapper;
         this.dependentService = dependentService;
+        this.locationService = locationService;
     }
 
     public List<PartnerDTO> getList() {
-        return repository.findAll().stream().map(mapper::toPartnerDTO).collect(Collectors.toList());
+        return repository.findAll().stream().map(mapper::toPartnerDTO).toList();
     }
 
     public PartnerDTO findById(@PathVariable @Positive @NotNull Long id) {
@@ -82,6 +85,12 @@ public class PartnerService implements ValidationService<PartnerDTO> {
 
     @Override
     public void validateInsertUpdate(PartnerDTO dto) {
+        if (dto.status().equals("Inactive")) {
+            for (LocationDTO locationDTO : locationService.getList().stream().filter(l -> l.customer().name().equals(dto.name())).toList()) {
+                throw new IntegrityConstraintException("Partner is being used in a location!");
+            }
+        }
+
         if (dto.name() == null || dto.name().isBlank()) {
             throw new RequiredFieldException("You must enter the partner name!");
         }
@@ -99,6 +108,10 @@ public class PartnerService implements ValidationService<PartnerDTO> {
     public void validateDelete(PartnerDTO dto) {
         for (DependentDTO dependentDTO : dependentService.getList().stream().filter(d -> d.partner().equals(dto)).toList()) {
             dependentService.delete(dependentDTO.id());
+        }
+
+        for (LocationDTO locationDTO : locationService.getList().stream().filter(l -> l.customer().name().equals(dto.name())).toList()) {
+            throw new IntegrityConstraintException("Partner is being used in a location!");
         }
     }
 }
